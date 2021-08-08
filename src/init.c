@@ -18,7 +18,7 @@ struct page_info* init_page(struct page_info* page) {
 	page->state = "null";
 	page->test = 123;
 
-	p_spare = &(page->spare);
+    p_spare = (page->spare);
 	init_spare_page(p_spare);
 
 	return page;

@@ -1,37 +1,37 @@
 #include "init.h"
 
-void SSD_read (struct ssd_info * ssd, unsigned int channel, unsigned int chip, unsigned int die, unsigned int plane, unsigned int block, unsigned int page);
-void SSD_write (struct ssd_info * ssd, unsigned int channel, unsigned int chip, unsigned int die, unsigned int plane, unsigned int block, unsigned int page, unsigned int input);
-void SSD_erase (struct ssd_info * ssd, unsigned int channel, unsigned int chip, unsigned int die, unsigned int plane, unsigned int block);
+void SSD_read (struct ssd_info * ssd, unsigned int I_ch, unsigned int I_chip, unsigned int I_die, unsigned int I_plane, unsigned int I_block, unsigned int I_page);
+void SSD_write  (struct ssd_info * ssd, unsigned int I_ch, unsigned int I_chip, unsigned int I_die, unsigned int I_plane, unsigned int I_block, unsigned int I_page, char * input);
+void SSD_erase (struct ssd_info * ssd, unsigned int I_ch, unsigned int I_chip, unsigned int I_die, unsigned int I_plane, unsigned int I_block);
 
 
 /* plain operations */
-void SSD_read (struct ssd_info * ssd, unsigned int channel, unsigned int chip, unsigned int die, unsigned int plane, unsigned int block, unsigned int page)
+void SSD_read (struct ssd_info * ssd, unsigned int I_ch, unsigned int I_chip, unsigned int I_die, unsigned int I_plane, unsigned int I_block, unsigned int I_page)
 {
-    printf("%s", ssd -> channel[channel] -> way [chip] -> die [die] -> plane [plane] -> block [block] -> page[page]->state);
+    printf("%s", ssd ->channel[I_ch].way[I_chip].die[I_die].plane[I_plane].block[I_block].page[I_page].data);
 }
 
-void SSD_write (struct ssd_info * ssd, unsigned int channel, unsigned int chip, unsigned int die, unsigned int plane, unsigned int block, unsigned int page, unsigned int lpn)
+void SSD_write (struct ssd_info * ssd, unsigned int I_ch, unsigned int I_chip, unsigned int I_die, unsigned int I_plane, unsigned int I_block, unsigned int I_page, char * input)
 {
-
-    ssd -> channel [channel] ->way[chip] -> die [die] -> plane[plane] ->block [block] -> page[page]->spare -> lpn = lpn;
-    ssd -> channel [channel] ->way[chip] -> die [die] -> plane[plane] ->block [block] -> page[page]->spare -> write_count++;
-
+    
+    //ssd -> channel [I_ch].way[I_chip]. die [I_die] .plane[I_plane] .block [I_block] .page[I_page].spare -> lpn = lpn;
+    ssd -> channel [I_ch] .way[I_chip] .die [I_die] . plane[I_plane] . block [I_block] . page[I_page] . spare -> write_count++;
+    
     //lpn has written data
-    char temp = (char)lpn; //type casting
-    strcpy(ssd -> channel [channel] ->way[chip] -> die [die] -> plane[plane] ->block [block] -> page[page]->data, &temp);
+    strcpy(ssd -> channel [I_ch] .way[I_chip] .die [I_die] . plane[I_plane] .block [I_block] . page[I_page].data, input);
 }
 
-void SSD_erase (struct ssd_info * ssd, unsigned int channel, unsigned int chip, unsigned int die, unsigned int plane, unsigned int block)
+void SSD_erase (struct ssd_info * ssd, unsigned int I_ch, unsigned int I_chip, unsigned int I_die, unsigned int I_plane, unsigned int I_block)
 {
-    memset(ssd -> channel [channel] ->way[chip] -> die [die] -> plane[plane] ->block [block] -> page, '/0', PAGE_NUM);
+    free(ssd -> channel [I_ch].way[I_chip]. die [I_die].plane[I_plane].block [I_block]. page);
+    
+    
     struct page_info * Empty_page = NULL;
     struct spare_page_info * Empty_sp = NULL;
     
     Empty_page = init_page(Empty_page);
     Empty_sp = init_spare_page(Empty_sp);
     
-    ssd -> channel [channel] ->way[chip] -> die [die] -> plane[plane] ->block [block] ->erase_count++;
-    
+    ssd -> channel [I_ch].way[I_chip].die [I_die] . plane[I_plane]. block [I_block] .erase_count++;
 }
 
