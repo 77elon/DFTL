@@ -1,5 +1,5 @@
 #include "init.h"
-#pragma once 
+
 
 struct spare_page_info* init_spare_page(struct spare_page_info* spare) {
 	spare = (struct spare_page_info*)malloc(sizeof(struct spare_page_info));
