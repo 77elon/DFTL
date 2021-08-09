@@ -1,6 +1,4 @@
 #include "init.h"
-#include "ssd.h"
-
 
 /* plain operations */
 void SSD_read (struct ssd_info * ssd, unsigned int I_ch, unsigned int I_chip, unsigned int I_die, unsigned int I_plane, unsigned int I_block, unsigned int I_page)
