@@ -17,7 +17,7 @@ int main()
 	SSD_write(ssd, 0, 0, 0, 0, 0, 0, "테슼");
 
 	SSD_read(ssd, 0, 0, 0, 0, 0, 0);
-	printf("%d\n", ssd->parameter->write_count);
+	printf("%d\n", ssd-> parameter ->write_count);
 
 	return 0;
 }

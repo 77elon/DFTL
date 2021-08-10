@@ -19,8 +19,8 @@
 #define PAGE_SIZE 4
 
 struct ssd_info {
-
 	struct channel_info* channel;
+	struct parameter_value* parameter;
 };
 
 struct channel_info {
@@ -115,12 +115,53 @@ struct ac_time_characteristics {
 	int tRST;      //device resetting time
 };
 
+struct parameter_value {
+	unsigned int write_count;
+	unsigned int read_count;
+	unsigned int erase_count;
+
+	//각 항목이 어떤 값인지?
+	unsigned int channel_num;
+	unsigned int way_channel;
+	unsigned int die_way;
+	unsigned int plane_die;
+	unsigned int block_plane;
+	unsigned int page_block;
+	
+	//bug Fixed.. init_way Function
+	unsigned int die_num;
+    unsigned int way_num;
+    
+    
+	unsigned int data_block_num;
+	unsigned int translation_block_num;
+	unsigned int page_num;
+};
+
+struct dram_info {
+	unsigned int capacity;
+
+	struct mapping_table* pmap;
+	struct mapping_table* bmap;
+};
+
+struct mapping_table {
+	unsigned int lpn;
+	unsigned int ppn;
+
+	unsigned int lbn;
+	unsigned int pbn;
+
+	int state;
+};
+
+struct parameter_value* init_parameter(struct parameter_value* parameter);
 struct ssd_info* init_ssd(struct ssd_info* ssd);
-struct channel_info* init_channel(struct channel_info* channel);
-struct way_info* init_way(struct way_info* way);
-struct die_info* init_die(struct die_info* die);
-struct plane_info* init_plane(struct plane_info* plane);
-struct block_info* init_block(struct block_info* block);
+struct channel_info* init_channel(struct channel_info* channel, struct parameter_value* p);
+struct way_info* init_way(struct way_info* way, struct parameter_value* p);
+struct die_info* init_die(struct die_info* die, struct parameter_value* p);
+struct plane_info* init_plane(struct plane_info* plane, struct parameter_value* p);
+struct block_info* init_block(struct block_info* block, struct parameter_value* p);
 struct page_info* init_page(struct page_info* page);
 struct spare_page_info* init_spare_page(struct spare_page_info* spare);
 struct ac_time_characteristics* init_time(struct ac_time_characteristics* time);

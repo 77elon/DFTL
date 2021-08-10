@@ -14,10 +14,10 @@ struct page_info* init_page(struct page_info* page) {
 
 	page->data = malloc(SECTOR_SIZE * PAGE_SIZE * 2);	
 	page->data = NULL;
-	page->state = -1;
+	page->state = "NULL";
 	page->test = 123;
 
-	p_spare = &(page->spare);
+    p_spare = page->spare;
 	init_spare_page(p_spare);
 
 	return page;
@@ -27,7 +27,7 @@ struct block_info* init_block(struct block_info* block, struct parameter_value* 
 	struct page_info* p_page;
 
 	block->erase_count = 0;
-	block->OOB = p->page_block - 1;        // 항상 마지막 페이지
+	block->OOB = p ->page_block - 1;        // 항상 마지막 페이지
 
 	// 수정필요
 	block->lbn = 0;
@@ -38,7 +38,7 @@ struct block_info* init_block(struct block_info* block, struct parameter_value* 
 	for (int i = 0; i < PAGE_NUM; i++)
 	{
 		p_page = &(block->page[i]);
-		init_page(p_page, p);              // 블록 페이지 수 만큼 초기화
+		init_page(p_page);              // 블록 페이지 수 만큼 초기화
 	}
 
 	return block;
@@ -61,7 +61,7 @@ struct plane_info* init_plane(struct plane_info* plane, struct parameter_value* 
 struct die_info* init_die(struct die_info* die, struct parameter_value* p) {
 	struct plane_info* p_plane;
 
-	die->isBusy = IDLE;
+	die->isBusy = "IDLE";
 
 	die->plane = (struct plane_info*)malloc(PLANE_NUM * sizeof(struct plane_info));
 	for (int i = 0; i < PLANE_NUM; i++)
@@ -76,10 +76,10 @@ struct die_info* init_die(struct die_info* die, struct parameter_value* p) {
 struct way_info* init_way(struct way_info* way, struct parameter_value* p) {
 	struct die_info* p_die;
 
-	way->isBusy = IDLE;
+	way->isBusy = "IDLE";
 
-	way->die = (struct die_info*)malloc(p->DIE_NUM * sizeof(struct die_info));
-	for (int i = 0; i < p->DIE_NUM; i++)
+	way->die = (struct die_info*)malloc((p->die_num) * sizeof(struct die_info));
+	for (int i = 0; i < (p->die_num); i++)
 	{
 		p_die = &(way->die[i]);
 		init_die(p_die, p);                  // 칩 다이 수만큼 초기화
@@ -91,10 +91,10 @@ struct way_info* init_way(struct way_info* way, struct parameter_value* p) {
 struct channel_info* init_channel(struct channel_info* channel, struct parameter_value* p) {
 	struct way_info* p_way;
 
-	channel->isBusy = IDLE;
+	channel->isBusy = "IDLE";
 
-	channel->way = (struct way_info*)malloc(WAY_NUM * sizeof(struct way_info));
-	for (int i = 0; i < p->WAY_NUM; i++)
+	channel->way = (struct way_info*)malloc(p-> way_num * sizeof(struct way_info));
+	for (int i = 0; i < p->way_num; i++)
 	{
 		p_way = &(channel->way[i]);
 		init_way(p_way, p);                  // 채널 칩 수 만큼 초기화
@@ -105,9 +105,9 @@ struct channel_info* init_channel(struct channel_info* channel, struct parameter
 
 struct ssd_info* init_ssd(struct ssd_info* ssd) {
 	struct channel_info* p_channel;
-	struct parameter_value* p;
+    struct parameter_value* p = NULL;
 
-	p = init_parameter(ssd->parameter);
+	init_parameter(ssd-> parameter);
 	ssd->parameter = p;
 
 	ssd->channel = (struct channel_info*)malloc(CHANNEL_NUM * sizeof(struct channel_info));
@@ -173,20 +173,25 @@ struct ac_time_characteristics* init_time(struct ac_time_characteristics* time) 
 	return time;
 };
 
-struct parameter_value* init_parameter(struct parameter_value *parameter){
+struct parameter_value* init_parameter(struct parameter_value *parameter) {
 	parameter = (struct parameter_value*)malloc(sizeof(struct parameter_value));
 
-	// parameter->channel_num = 5;
-	// parameter->way_channel = 5;
-	// parameter->die_way = 5;
-	// parameter->plane_die = 2;
-	// parameter->block_plane = 60;			
-	// parameter->page_block = 32;
+	parameter->channel_num = 5;
+	parameter->way_channel = 5;
+	parameter->die_way = 5;
+    
+	//08-10 Bug Fixed in init_way Func
+	parameter -> die_num = DIE_NUM;
+    parameter -> way_num = WAY_NUM;
+    
+	parameter->plane_die = 2;
+	parameter->block_plane = 60;			
+	parameter->page_block = 32;
 
 	parameter->data_block_num = -1;
 	parameter->translation_block_num = -1;
 	parameter->page_num = parameter->page_block * parameter->block_plane * 
-		parameter->plane_die * parameter->die_way * parameter->way_channel * parameter->channel_num;		// 전체 페이지 수
+	parameter->plane_die * parameter->die_way * parameter->way_channel * parameter->channel_num;		// 전체 페이지 수
 
 	parameter->write_count = 0;
 	parameter->read_count = 0;
