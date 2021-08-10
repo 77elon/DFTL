@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define CHANNEL_NUM 4
+#pragma once
+
+#define CHANNEL_NUM 5
 #define WAY_NUM 5
 #define DIE_NUM 4
 #define PLANE_NUM 4
@@ -114,6 +116,8 @@ struct ac_time_characteristics {
 	int tWHR;      //WE high to RE low
 	int tRST;      //device resetting time
 };
+
+
 
 struct ssd_info* init_ssd(struct ssd_info* ssd);
 struct channel_info* init_channel(struct channel_info* channel);
