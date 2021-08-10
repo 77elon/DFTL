@@ -2,6 +2,10 @@
 초기화 함수 대충 설계
 ssd HW 초기화 완료.
 
+8/10 신윤수
+parameter 구조체 생성 및 최적화
+parameter 구조체 활용해야 하니 꼭 확인 할 것!
+
 <필수 기능 리스트>
 1. Mapping Table 구성
 -> DRAM type Struct 구성 후, Page Mapping table, LPN based Operation 구성.
