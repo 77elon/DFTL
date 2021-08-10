@@ -25,11 +25,12 @@ void SSD_erase (struct ssd_info * ssd, unsigned int I_ch, unsigned int I_chip, u
     //unsigned int b_pbn = ssd -> channel [I_ch].way[I_chip]. die [I_die].plane[I_plane].block [I_block] . pbn;
     //int b_OOB = ssd -> channel [I_ch].way[I_chip]. die [I_die].plane[I_plane].block [I_block] . OOB;
 
+    //전체 페이지 초기화
     free(ssd -> channel [I_ch].way[I_chip]. die [I_die].plane[I_plane].block [I_block] . page);
     for (int i = 0; i < PAGE_NUM; i++)
     {
-        struct page_info* erase_page;
-        erase_page = ssd -> channel [I_ch].way[I_chip]. die [I_die].plane[I_plane].block[I_block] . page;
+        struct page_info erase_page; //특정 페이지 초기 Parameter 재구성
+        erase_page = ssd -> channel [I_ch].way[I_chip]. die [I_die].plane[I_plane].block[I_block] . page[i]; 
         init_page(erase_page);
     }
 
