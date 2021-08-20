@@ -6,6 +6,10 @@ ssd HW 초기화 완료.
 parameter 구조체 생성 및 최적화
 parameter 구조체 활용해야 하니 꼭 확인 할 것!
 
+8/13 신윤수
+dram, mapping table 구현
+mapping table 출력 함수 구현 (test.txt)
+
 <문제점>
 1. 현재 parameter 이름 규격화 필요.
 -> 이해가 안되서...
@@ -18,6 +22,10 @@ parameter 구조체 활용해야 하니 꼭 확인 할 것!
 (i.e., p_spare = &(page -> spare) --> p_spare = page -> spare)
 단, Struct Array (Address + 1, 2, 3...)에서는 사용해도 괜찮다.
 (i.e., p_die = &(way -> die[i]))
+
+4. channel, way, die, plane 은 정상적으로 접근 가능
+but block, page, mapping table 같은 경우, 우리가 제한한 범위보다 더 큰 숫자에 접근 가능하게됨.
+(초기화는 안되어 있음.)
 
 <필수 기능 리스트>
 1. Mapping Table 구성
