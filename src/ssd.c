@@ -1,6 +1,55 @@
 #include "init.h"
 #include "ssd.h"
 
+void FTL_read(struct ssd_info *ssd, unsigned int ppn)
+{
+    struct calc_loc ret = get_location(ssd, ppn, 0);
+    unsigned int ch, way, die, plane, block, page;
+    
+    ch = ret . ch;
+    way = ret . way;
+    die = ret . die;
+    plane = ret . plane;
+    block = ret . block;
+    page = ret . page;
+    
+    SSD_read(ssd, ch, way, die, plane, block, page);
+    
+}
+
+void FTL_write(struct ssd_info *ssd, unsigned int ppn, char* input)
+{
+    struct calc_loc ret = get_location(ssd, ppn, 0);
+    unsigned int ch, way, die, plane, block, page;
+    
+    ch = ret . ch;
+    way = ret . way;
+    die = ret . die;
+    plane = ret . plane;
+    block = ret . block;
+    page = ret . page;
+    
+    
+    SSD_write(ssd, ch, way, die, plane, block, page, input);
+    
+}
+
+void FTL_erase(struct ssd_info *ssd, unsigned int ppn)
+{
+    struct calc_loc ret = get_location(ssd, ppn, '\1');
+    unsigned int ch, way, die, plane, block;
+    
+    ch = ret . ch;
+    way = ret . way;
+    die = ret . die;
+    plane = ret . plane;
+    block = ret . block;
+    
+    SSD_erase(ssd, ch, way, die, plane, block);
+    
+}
+
+
 /* plain operations */
 void SSD_read(struct ssd_info* ssd, unsigned int I_ch, unsigned int I_chip, unsigned int I_die, unsigned int I_plane, unsigned int I_block, unsigned int I_page)
 {
@@ -53,4 +102,3 @@ void SSD_erase(struct ssd_info* ssd, unsigned int I_ch, unsigned int I_chip, uns
     
     ssd->parameter->erase_count++;
 }
-

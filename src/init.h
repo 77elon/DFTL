@@ -16,9 +16,9 @@
 // size
 #define SECTOR_SIZE 512
 #define PAGE_SIZE 4
-#define DRAM_SIZE 10				// MB
-#define MP_SIZE 4					// MB
-#define CACHE_SIZE 1				// MB
+#define DRAM_SIZE 10                // MB
+#define MP_SIZE 4                    // MB
+#define CACHE_SIZE 1                // MB
 
 //toggle
 #define IDLE 1
@@ -27,9 +27,11 @@
 //data state
 #define VALID 1
 #define INVALID 0
+#define FREE -1
+#define NONE -1                        // no data
 
 struct ssd_info {
-    
+
     //struct dram_info* dram;
     struct channel_info* channel;
     struct dram_info* dram;
@@ -38,26 +40,28 @@ struct ssd_info {
 
 struct channel_info {
     int isBusy;
-    
+
     struct way_info* way;
 };
 
 struct way_info {
     int isBusy;
-    
+
     struct die_info* die;
 };
 
 struct die_info {
     int isBusy;
-    
+
     struct plane_info* plane;
 };
 
 struct plane_info {
-    
+
     // struct block_info *data_block;
     // struct block_info *translation_block;
+    unsigned int spare_block_num;
+
     struct block_info* block;
 };
 
@@ -66,8 +70,8 @@ struct block_info {
     unsigned int lbn;
     unsigned int pbn;
     int OOB;
-    
-    
+
+
     // struct page_info *data_page;
     // struct page_info *translation_page;
     struct page_info* page;
@@ -77,7 +81,7 @@ struct page_info {
     int state;
     char* data;
     int test;
-    
+
     struct spare_page_info* spare;
 };
 
@@ -129,14 +133,7 @@ struct parameter_value {
     unsigned int write_count;
     unsigned int read_count;
     unsigned int erase_count;
-    
-    unsigned int channel_num;
-    unsigned int way_channel;
-    unsigned int die_way;
-    unsigned int plane_die;
-    unsigned int block_plane;
-    unsigned int page_block;
-    
+
     unsigned int data_block_num;
     unsigned int translation_block_num;
     unsigned int page_num;
@@ -144,7 +141,7 @@ struct parameter_value {
 
 struct dram_info {
     unsigned int capacity;
-    
+
     struct mapping_table* pmap;
     struct mapping_table* bmap;
     struct mapping_table* cache;
@@ -153,12 +150,12 @@ struct dram_info {
 struct mapping_table {
     unsigned int lpn;
     unsigned int ppn;
-    
+
     unsigned int lbn;
     unsigned int pbn;
-    
+
     int state;
-};	
+};
 
 struct parameter_value* init_parameter(struct parameter_value* parameter);
 
@@ -177,5 +174,6 @@ struct mapping_table* init_mapping_table(struct mapping_table* mp);
 struct dram_info* init_cache_mapping(struct dram_info* dram);
 struct dram_info* init_block_mapping(struct dram_info* dram);
 struct dram_info* init_page_mapping(struct dram_info* dram);
+
 void select_table(struct dram_info* dram, char choice);
 
