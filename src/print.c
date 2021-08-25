@@ -3,10 +3,11 @@
 
 void print_mappingTable(struct mapping_table* mp, struct parameter_value* p, char choice) {
     FILE* fp;
-    char* temp = malloc(p->page_num);
     
     fp = fopen("test.txt", "wt");
     
+    char* temp = malloc(p->page_num);
+
     if (fp == NULL) {
         printf("파일열기 실패\n");
         return;
