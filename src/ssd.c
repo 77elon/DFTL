@@ -6,7 +6,7 @@ void FTL_read(struct ssd_info *ssd, unsigned int lpn)
     struct mapping_table *mp = ssd->dram->pmap;
     if(mp[lpn].state == 1) //is Valid, not inValid or empty..
     {
-        unsigned int ppn = mp[lpn].pbn;
+        unsigned int ppn = mp[lpn].ppn;
         
         struct calc_loc ret = get_location(ssd, ppn, 0);
         unsigned int ch, way, die, plane, block, page;
@@ -26,8 +26,23 @@ void FTL_read(struct ssd_info *ssd, unsigned int lpn)
 void FTL_write(struct ssd_info *ssd, unsigned int lpn, char* input)
 {
     struct mapping_table *mp = ssd->dram->pmap;
-    unsigned int ppn = mp[lpn].pbn;
     
+    /*only Debugging*/
+    //mapping_update(mp, 0, 0);
+    int iter_count = 0;
+    if(mp[lpn].ppn != -1)
+    {
+        iter_count = mp[lpn].ppn;
+    }
+
+    while(mp[lpn].ppn != -1)
+    {
+        ++mp[lpn].ppn;
+    }
+    mapping_update(mp, lpn, iter_count);
+    //mp[lpn].ppn = iter_count;
+    
+    unsigned int ppn = mp[lpn].ppn;
     struct calc_loc ret = get_location(ssd, ppn, 0);
     unsigned int ch, way, die, plane, block, page;
     
@@ -46,7 +61,7 @@ void FTL_write(struct ssd_info *ssd, unsigned int lpn, char* input)
 void FTL_erase(struct ssd_info *ssd, unsigned int lpn)
 {
     struct mapping_table *mp = ssd->dram->pmap;
-    unsigned int ppn = mp[lpn].pbn;
+    unsigned int ppn = mp[lpn].ppn;
     
     struct calc_loc ret = get_location(ssd, ppn, '\1');
     unsigned int ch, way, die, plane, block;
@@ -69,7 +84,7 @@ void SSD_read(struct ssd_info* ssd, unsigned int I_ch, unsigned int I_chip, unsi
         ssd->parameter->read_count++;
         printf("%s\n", ssd->channel[I_ch].way[I_chip].die[I_die].plane[I_plane].block[I_block].page[I_page].data);
     }
-    else 
+    else
         printf("page is Empty\n");
     
 }
