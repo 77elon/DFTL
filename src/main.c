@@ -30,7 +30,7 @@ int main()
     SSD_read(ssd, 0, 0, 0, 0, 0, 0);
     SSD_read(ssd, 0, 0, 0, 0, 1, 0);
     SSD_read(ssd, 0, 0, 0, 0, 2, 0);
-
+    
     
     printf("%d \n", ssd->dram->pmap[1].lpn);
     printf("%d \n", ssd->dram->pmap[1].ppn);

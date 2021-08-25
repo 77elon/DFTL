@@ -31,7 +31,7 @@
 #define NONE -1                        // no data
 
 struct ssd_info {
-
+    
     //struct dram_info* dram;
     struct channel_info* channel;
     struct dram_info* dram;
@@ -40,28 +40,28 @@ struct ssd_info {
 
 struct channel_info {
     int isBusy;
-
+    
     struct way_info* way;
 };
 
 struct way_info {
     int isBusy;
-
+    
     struct die_info* die;
 };
 
 struct die_info {
     int isBusy;
-
+    
     struct plane_info* plane;
 };
 
 struct plane_info {
-
+    
     // struct block_info *data_block;
     // struct block_info *translation_block;
     unsigned int spare_block_num;
-
+    
     struct block_info* block;
 };
 
@@ -70,8 +70,8 @@ struct block_info {
     unsigned int lbn;
     unsigned int pbn;
     int OOB;
-
-
+    
+    
     // struct page_info *data_page;
     // struct page_info *translation_page;
     struct page_info* page;
@@ -81,7 +81,7 @@ struct page_info {
     int state;
     char* data;
     int test;
-
+    
     struct spare_page_info* spare;
 };
 
@@ -133,7 +133,7 @@ struct parameter_value {
     unsigned int write_count;
     unsigned int read_count;
     unsigned int erase_count;
-
+    
     unsigned int data_block_num;
     unsigned int translation_block_num;
     unsigned int page_num;
@@ -141,7 +141,7 @@ struct parameter_value {
 
 struct dram_info {
     unsigned int capacity;
-
+    
     struct mapping_table* pmap;
     struct mapping_table* bmap;
     struct mapping_table* cache;
@@ -150,10 +150,10 @@ struct dram_info {
 struct mapping_table {
     unsigned int lpn;
     unsigned int ppn;
-
+    
     unsigned int lbn;
     unsigned int pbn;
-
+    
     int state;
 };
 

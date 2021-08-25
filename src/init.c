@@ -2,7 +2,7 @@
 
 struct spare_page_info* init_spare_page(struct spare_page_info* spare) {
     spare = (struct spare_page_info*)malloc(sizeof(struct spare_page_info));
-
+    
     // 논의 필요
     if (spare != NULL)
     {
@@ -17,30 +17,30 @@ struct spare_page_info* init_spare_page(struct spare_page_info* spare) {
 
 struct page_info* init_page(struct page_info* page) {
     struct spare_page_info* p_spare;
-
+    
     page->data = malloc(SECTOR_SIZE * PAGE_SIZE * 2);
     page->data = NULL;
     page->state = FREE;
     page->test = 123;
-
+    
     p_spare = (page->spare);
     init_spare_page(p_spare);
-
+    
     return page;
 }
 
 struct block_info* init_block(struct block_info* block, struct parameter_value* p) {
     struct page_info* p_page;
-
+    
     block->erase_count = 0;
     block->OOB = PAGE_NUM - 1;        // 항상 마지막 페이지
-
+    
     // 수정필요
     block->lbn = 0;
     block->pbn = 0;
-
+    
     block->page = (struct page_info*)malloc(PAGE_NUM * sizeof(struct page_info));
-
+    
     if (block->page != NULL)
     {
         for (int i = 0; i < PAGE_NUM; i++)
@@ -48,7 +48,7 @@ struct block_info* init_block(struct block_info* block, struct parameter_value* 
             p_page = &(block->page[i]);
             init_page(p_page);              // 블록 페이지 수 만큼 초기화
         }
-
+        
         return block;
     }
     return NULL;
@@ -56,12 +56,12 @@ struct block_info* init_block(struct block_info* block, struct parameter_value* 
 
 struct plane_info* init_plane(struct plane_info* plane, struct parameter_value* p) {
     struct block_info* p_block;
-
-
+    
+    
     plane->block = (struct block_info*)malloc(BLOCK_NUM * sizeof(struct block_info));
-
+    
     plane->spare_block_num = BLOCK_NUM - (PLANE_NUM * (BLOCK_NUM / 10));
-
+    
     if (plane->block != NULL)
     {
         for (int i = 0; i < BLOCK_NUM; i++)
@@ -69,7 +69,7 @@ struct plane_info* init_plane(struct plane_info* plane, struct parameter_value* 
             p_block = &(plane->block[i]);
             init_block(p_block, p);                  // 플래인 블록 수 만큼 초기화
         }
-
+        
         return plane;
     }
     return NULL;
@@ -77,11 +77,11 @@ struct plane_info* init_plane(struct plane_info* plane, struct parameter_value* 
 
 struct die_info* init_die(struct die_info* die, struct parameter_value* p) {
     struct plane_info* p_plane;
-
+    
     die->isBusy = IDLE;
-
+    
     die->plane = (struct plane_info*)malloc(PLANE_NUM * sizeof(struct plane_info));
-
+    
     if (die->plane != NULL)
     {
         for (int i = 0; i < PLANE_NUM; i++)
@@ -89,7 +89,7 @@ struct die_info* init_die(struct die_info* die, struct parameter_value* p) {
             p_plane = &(die->plane[i]);
             init_plane(p_plane, p);                  // 다이 플래인 수 만큼 초기화
         }
-
+        
         return die;
     }
     return NULL;
@@ -97,11 +97,11 @@ struct die_info* init_die(struct die_info* die, struct parameter_value* p) {
 
 struct way_info* init_way(struct way_info* way, struct parameter_value* p) {
     struct die_info* p_die;
-
+    
     way->isBusy = IDLE;
-
+    
     way->die = (struct die_info*)malloc(DIE_NUM * sizeof(struct die_info));
-
+    
     if (way->die != NULL)
     {
         for (int i = 0; i < DIE_NUM; i++)
@@ -116,9 +116,9 @@ struct way_info* init_way(struct way_info* way, struct parameter_value* p) {
 
 struct channel_info* init_channel(struct channel_info* channel, struct parameter_value* p) {
     struct way_info* p_way;
-
+    
     channel->isBusy = IDLE;
-
+    
     channel->way = (struct way_info*)malloc(WAY_NUM * sizeof(struct way_info));
     if (channel->way != NULL)
     {
@@ -127,7 +127,7 @@ struct channel_info* init_channel(struct channel_info* channel, struct parameter
             p_way = &(channel->way[i]);
             init_way(p_way, p);                  // 채널 칩 수 만큼 초기화
         }
-
+        
         return channel;
     }
     return NULL;
@@ -137,16 +137,16 @@ struct ssd_info* init_ssd(struct ssd_info* ssd, char choice) {
     struct channel_info* p_channel;
     struct parameter_value* p;
     struct dram_info* p_dram;
-
+    
     p = init_parameter(ssd->parameter);
     ssd->parameter = p;
-
+    
     ssd->dram = (struct dram_info*)malloc(sizeof(struct dram_info));                            // dram 공간 할당
     ssd->channel = (struct channel_info*)malloc(CHANNEL_NUM * sizeof(struct channel_info));        // channel 공간 할당
-
+    
     p_dram = ssd->dram;
     select_table(p_dram, choice);                    // mapping table 선택
-
+    
     if (ssd->channel != NULL)
     {
         for (int i = 0; i < CHANNEL_NUM; i++)
@@ -154,7 +154,7 @@ struct ssd_info* init_ssd(struct ssd_info* ssd, char choice) {
             p_channel = &(ssd->channel[i]);
             init_channel(p_channel, p);                  // 채널 수 만큼 초기화
         }
-
+        
         return ssd;
     }
     return NULL;
@@ -192,25 +192,25 @@ struct ssd_info* init_ssd(struct ssd_info* ssd, char choice) {
 
 void select_table(struct dram_info* dram, char choice) {
     switch (choice) {
-    case 'p':
-        init_page_mapping(dram);            // page mapping
-        break;
-
-    case 'b':
-        init_block_mapping(dram);            // block mapping
-        break;
-
-    case 'c':
-        init_cache_mapping(dram);            // DFTL mapping table
-        break;
+        case 'p':
+            init_page_mapping(dram);            // page mapping
+            break;
+            
+        case 'b':
+            init_block_mapping(dram);            // block mapping
+            break;
+            
+        case 'c':
+            init_cache_mapping(dram);            // DFTL mapping table
+            break;
     }
 }
 
 struct dram_info* init_page_mapping(struct dram_info* dram) {
     struct mapping_table* p_pmap;
-
+    
     dram->pmap = (struct mapping_table*)malloc(MP_SIZE * 256 * 1024 * sizeof(struct mapping_table));
-
+    
     if (dram->pmap != NULL)
     {
         for (int i = 0; i < MP_SIZE * 256 * 1024; i++)
@@ -219,21 +219,21 @@ struct dram_info* init_page_mapping(struct dram_info* dram) {
             init_mapping_table(p_pmap);                  // 채널 수 만큼 초기화
         }
     }
-
+    
     for (int i = 0; i < MP_SIZE * 256 * 1024; i++)
     {
         dram->pmap[i].lbn = i;
         dram->pmap[i].lpn = i;
     }
-
+    
     return dram;
 }
 
 struct dram_info* init_block_mapping(struct dram_info* dram) {
     struct mapping_table* p_bmap;
-
+    
     dram->bmap = (struct mapping_table*)malloc(MP_SIZE * 256 * 1024 * sizeof(struct mapping_table));
-
+    
     if (dram->bmap != NULL)
     {
         for (int i = 0; i < MP_SIZE * 256 * 1024; i++)
@@ -242,21 +242,21 @@ struct dram_info* init_block_mapping(struct dram_info* dram) {
             init_mapping_table(p_bmap);
         }
     }
-
+    
     for (int i = 0; i < MP_SIZE * 256 * 1024; i++)
     {
         dram->pmap[i].lbn = i;
         dram->pmap[i].lpn = i;
     }
-
+    
     return dram;
 }
 
 struct dram_info* init_cache_mapping(struct dram_info* dram) {
     struct mapping_table* p_cache;
-
+    
     dram->cache = (struct mapping_table*)malloc(CACHE_SIZE * 256 * 1024 * sizeof(struct mapping_table));
-
+    
     if (dram->cache != NULL)
     {
         for (int i = 0; i < CACHE_SIZE * 256 * 1024; i++)
@@ -265,25 +265,25 @@ struct dram_info* init_cache_mapping(struct dram_info* dram) {
             init_mapping_table(p_cache);
         }
     }
-
+    
     for (int i = 0; i < CACHE_SIZE * 256 * 1024; i++)
     {
         dram->pmap[i].lbn = i;
         dram->pmap[i].lpn = i;
     }
-
+    
     return dram;
 }
 
 struct mapping_table* init_mapping_table(struct mapping_table* mp) {
     mp->lpn = NONE;
     mp->ppn = NONE;
-
+    
     mp->lbn = NONE;
     mp->pbn = NONE;
-
+    
     mp->state = FREE;
-
+    
     return mp;
 }
 
@@ -328,7 +328,7 @@ struct ac_time_characteristics* init_time(struct ac_time_characteristics* time) 
         time->tRHW = 0;      //RE high to WE low
         time->tWHR = 0;      //WE high to RE low
         time->tRST = 0;      //device resetting time
-
+        
         return time;
     }
     return NULL;
@@ -336,17 +336,17 @@ struct ac_time_characteristics* init_time(struct ac_time_characteristics* time) 
 
 struct parameter_value* init_parameter(struct parameter_value* parameter) {
     parameter = (struct parameter_value*)malloc(sizeof(struct parameter_value));
-
+    
     if (parameter != NULL)
     {
         parameter->data_block_num = NONE;
         parameter->translation_block_num = NONE;
         parameter->page_num = PAGE_NUM * BLOCK_NUM * PLANE_NUM * DIE_NUM * WAY_NUM * CHANNEL_NUM;        // 전체 페이지 수
-
+        
         parameter->write_count = 0;
         parameter->read_count = 0;
         parameter->erase_count = 0;
-
+        
         return parameter;
     }
     return NULL;

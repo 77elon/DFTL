@@ -1,24 +1,33 @@
 #include "init.h"
 #include "ssd.h"
 
-void FTL_read(struct ssd_info *ssd, unsigned int ppn)
+void FTL_read(struct ssd_info *ssd, unsigned int lsn)
 {
-    struct calc_loc ret = get_location(ssd, ppn, 0);
-    unsigned int ch, way, die, plane, block, page;
-    
-    ch = ret . ch;
-    way = ret . way;
-    die = ret . die;
-    plane = ret . plane;
-    block = ret . block;
-    page = ret . page;
-    
-    SSD_read(ssd, ch, way, die, plane, block, page);
+    struct mapping_table *mp = ssd->dram->pmap;
+    if(mp[lsn].state == 1) //is Valid, not inValid or empty..
+    {
+        unsigned int ppn = mp[lsn].pbn;
+        
+        struct calc_loc ret = get_location(ssd, ppn, 0);
+        unsigned int ch, way, die, plane, block, page;
+        
+        ch = ret . ch;
+        way = ret . way;
+        die = ret . die;
+        plane = ret . plane;
+        block = ret . block;
+        page = ret . page;
+        
+        SSD_read(ssd, ch, way, die, plane, block, page);
+    }
     
 }
 
-void FTL_write(struct ssd_info *ssd, unsigned int ppn, char* input)
+void FTL_write(struct ssd_info *ssd, unsigned int lsn, char* input)
 {
+    struct mapping_table *mp = ssd->dram->pmap;
+    unsigned int ppn = mp[lsn].pbn;
+    
     struct calc_loc ret = get_location(ssd, ppn, 0);
     unsigned int ch, way, die, plane, block, page;
     
@@ -34,8 +43,11 @@ void FTL_write(struct ssd_info *ssd, unsigned int ppn, char* input)
     
 }
 
-void FTL_erase(struct ssd_info *ssd, unsigned int ppn)
+void FTL_erase(struct ssd_info *ssd, unsigned int lsn)
 {
+    struct mapping_table *mp = ssd->dram->pmap;
+    unsigned int ppn = mp[lsn].pbn;
+    
     struct calc_loc ret = get_location(ssd, ppn, '\1');
     unsigned int ch, way, die, plane, block;
     
